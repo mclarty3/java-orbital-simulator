@@ -1,4 +1,12 @@
+import org.jetbrains.annotations.Nullable;
+
 public class Button {
+
+    enum action {
+        RETURN,
+        QUIT,
+        OPEN_MENU
+    }
 
     private float width;
     private float  height;
@@ -9,9 +17,15 @@ public class Button {
     private int textColour;
     private int borderColour;
     private boolean highlighted;
+    private action onButtonPress;
 
+    public Menu nextMenu;
+
+
+    // If this button does not open up another menu, pass null to goToMenu. Simple as that!
     public Button(float buttonWidth, float buttonHeight, float xPosition, float yPosition,
-                  String buttonText, int buttonTextColour, int buttonColour, int buttonBorderColour) {
+                  String buttonText, int buttonTextColour, int buttonColour, int buttonBorderColour,
+                  action buttonPressAction, @Nullable Menu goToMenu) {
         width = buttonWidth;
         height = buttonHeight;
         xPos = xPosition;
@@ -20,6 +34,8 @@ public class Button {
         text = buttonText;
         textColour = buttonTextColour;
         borderColour = buttonBorderColour;
+        onButtonPress = buttonPressAction;
+        nextMenu = goToMenu;
     }
 
     // Getters and setters
@@ -87,7 +103,7 @@ public class Button {
         this.borderColour = borderColour;
     }
 
-    public boolean mouseOnButton(float x, float y) {
+    public boolean mouseOnButton(int x, int y) {
         return((x >= xPos) && (x <= xPos + width) && (y >= yPos) && (y <= yPos + height));
     }
 
@@ -127,5 +143,9 @@ public class Button {
         }
         long longHex = Long.parseLong(finalHex, 16);
         colour = (int)longHex;
+    }
+
+    public action getAction() {
+        return onButtonPress;
     }
 }
