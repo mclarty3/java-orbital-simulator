@@ -20,30 +20,52 @@ public class Window extends PApplet {
     private PFont font;
     private PFont buttonFont;
 
-    private static List<Button> visibleButtons = new ArrayList<>(); // List of buttons on screen (for checking if user clicks on a button)
+    /*private static List<Button> visibleButtons = new ArrayList<>(); // List of buttons on screen (for checking if user clicks on a button)
     private static List<Button> escapeMenuButtons = new ArrayList<>();
 
     private static boolean escapeMenuOpen = false; // Holds whether user is currently in the escape menu
+    private static boolean displayingMenu = false;*/
+
+    private static Menu currentlyDisplayedMenu;
+    private static Menu escapeMenu = new Menu(0xFF000000);
+    private static Menu optionsMenu = new Menu(0xFF000000);
 
     // Escape menu button declarations
     private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT / 10, "Resume",
-                                                    255, 0xFF282828, 0x00000000);
+                                                    255, 0xFF282828, 0x00000000,
+                                                    Button.action.RETURN, null);
     private static Button optionsButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                     WINDOW_WIDTH / 3, WINDOW_HEIGHT * 7 / 20, "Options",
-                                                    255, 0xFF282828, 0x00000000);
+                                                    255, 0xFF282828, 0x00000000,
+                                                    Button.action.OPEN_MENU, optionsMenu);
     private static Button quitButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                 WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Quit",
-                                                255, 0xFF282828, 0x00000000);
+                                                255, 0xFF282828, 0x00000000,
+                                                Button.action.QUIT, null);
+
+    // Options menu button declarations
+    private static Button displaySizeSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                        WINDOW_WIDTH / 3, WINDOW_HEIGHT / 10, "Display size",
+                                                        255, 0xFF282828, 0x00000000,
+                                                        Button.action.OPEN_MENU, null);
+    private static Button keyboardLayoutSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                        WINDOW_WIDTH / 3, WINDOW_HEIGHT * 7 / 20, "Keyboard layout",
+                                                        255, 0xFF282828, 0x00000000,
+                                                        Button.action.OPEN_MENU, null);
+    private static Button viewControls = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                        WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Controls",
+                                                        255, 0xFF282828, 0x00000000,
+                                                        Button.action.OPEN_MENU, null);
+
 
     public void setup() {
         // Fonts
         font = createFont("Arial", 12, true);
         buttonFont = createFont("Arial", 24, true);
-        // Escape menu buttons
-        escapeMenuButtons.add(resumeButton);
-        escapeMenuButtons.add(optionsButton);
-        escapeMenuButtons.add(quitButton);
+
+        escapeMenu.addButtons(resumeButton, optionsButton, quitButton);
+        optionsMenu.addButtons(displaySizeSetup, keyboardLayoutSetup, viewControls);
     }
 
     public void settings() {
@@ -51,18 +73,13 @@ public class Window extends PApplet {
     }
 
     public void draw() {
-        // Highlights button if mouse hovering over
-        for (Button button: visibleButtons) {
-            if (button.isHighlighted() && !button.mouseOnButton(mouseX, mouseY)) {
-                button.unHighlightColour();
-            }
-            else if (!button.isHighlighted() && button.mouseOnButton(mouseX, mouseY)) {
-                button.highlightColour();
-            }
-        }
-        // Draws escape menu
-        if (escapeMenuOpen) {
-            drawEscapeMenu();
+
+        // Draws currently displayed menu
+        if (currentlyDisplayedMenu != null) {
+            // Highlights button if mouse hovering over
+            currentlyDisplayedMenu.checkButtonHighlights(mouseX, mouseY);
+            // Draws the menu on the screen
+            displayMenu(currentlyDisplayedMenu);
         }
         else {
             background(0);
@@ -110,13 +127,6 @@ public class Window extends PApplet {
         text(button.getText(), button.getXPos() + (button.getWidth() / 2), button.getYPos() + (button.getHeight() / 2));
     }
 
-    // Draws list of all visible buttons on screen
-    private void drawVisibleButtons() {
-        for (Button button: visibleButtons) {
-            drawButton(button);
-        }
-    }
-
     // Draws a box with information about the currently selected body in the bottom right of the screen
     private void drawSelectedBodyMenu(Body body) {
         fill(0x99808080);
@@ -142,57 +152,76 @@ public class Window extends PApplet {
                 (float) radius, (float) radius);
     }
 
-    // Draws menu pulled up when the user presses escape
-    private void drawEscapeMenu() {
-        background(0);
-        drawVisibleButtons();
-    }
-
-    private void openEscapeMenu() {
+    // Opens the specified menu
+    private void openMenu(Menu menu) {
         Main.paused = true;
-        escapeMenuOpen = true;
-        visibleButtons.addAll(escapeMenuButtons);
+        menu.isDisplayed = true;
+        currentlyDisplayedMenu = menu;
     }
 
-    private void closeEscapeMenu() {
-        visibleButtons.removeAll(escapeMenuButtons);
-        escapeMenuOpen = false;
-        Main.paused = false;
+    // Closes the specified menu, returning to a previous menu or the simulation
+    private void closeMenu(Menu menu) {
+        menu.isDisplayed = false;
+        // Goes to previous menu if it exists
+        if (menu.menuToReturnTo != null) {
+            openMenu(menu.menuToReturnTo);
+        }
+        else {
+            currentlyDisplayedMenu = null;
+            Main.paused = false;
+        }
+    }
+
+    private void displayMenu(Menu menu) {
+        background(menu.bgColour);
+        for (Button button: menu.menuButtons) {
+            drawButton(button);
+        }
+    }
+
+    private void buttonPress(Button button) {
+        Button.action action = button.getAction();
+        if (action == Button.action.RETURN) {
+            closeMenu(currentlyDisplayedMenu);
+        }
+        else if (action == Button.action.QUIT) {
+            exit();
+        }
+        else if (action == Button.action.OPEN_MENU && button.nextMenu != null) {
+            openMenu(button.nextMenu);
+        }
     }
 
     public void mousePressed() {
-        if (escapeMenuOpen)  {
-            if (resumeButton.isHighlighted()) {
-                closeEscapeMenu();
+        if (currentlyDisplayedMenu != null) {
+            for (Button button: currentlyDisplayedMenu.menuButtons) {
+                if (button.isHighlighted()) {
+                    buttonPress(button);
+                }
             }
-            else if (optionsButton.isHighlighted()) {
-                // Do nothing rn
-            }
-            else if (quitButton.isHighlighted()) {
-                exit();
-            }
-        }
-        if (mouseButton == RIGHT) {
-            Main.addingOrbitingBody = false;
-            Main.selectingOrbitedBody = false;
         }
         else {
-            // Mouse action if adding orbiting body
-            if (Main.addingOrbitingBody) {
+            if (mouseButton == RIGHT) {
                 Main.addingOrbitingBody = false;
-                Vector planetPos = new Vector(mouseX, mouseY);
-                planetPos.toWorldSpace();
-                Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 10e6);
-            }
-            // Selects the clicked on body in the simulation
-            Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
-            // Checks if player is selecting a body to add an orbiting body around
-            if (Main.selectingOrbitedBody) {
-                if (Main.selectedBody != null) {
-                    Main.selectingOrbitedBody = false;
-                    Main.addingOrbitingBody = true;
-                } else {
-                    Main.selectingOrbitedBody = false;
+                Main.selectingOrbitedBody = false;
+            } else {
+                // Mouse action if adding orbiting body
+                if (Main.addingOrbitingBody) {
+                    Main.addingOrbitingBody = false;
+                    Vector planetPos = new Vector(mouseX, mouseY);
+                    planetPos.toWorldSpace();
+                    Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 10e6);
+                }
+                // Selects the clicked on body in the simulation
+                Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
+                // Checks if player is selecting a body to add an orbiting body around
+                if (Main.selectingOrbitedBody) {
+                    if (Main.selectedBody != null) {
+                        Main.selectingOrbitedBody = false;
+                        Main.addingOrbitingBody = true;
+                    } else {
+                        Main.selectingOrbitedBody = false;
+                    }
                 }
             }
         }
@@ -254,12 +283,12 @@ public class Window extends PApplet {
         else if (keyCode == KeyEvent.VK_ESCAPE) {
             key = 0; // Prevents Processing from closing the sketch (as it typically does when ESC is pushed)
             // Opens escape menu
-            if (!escapeMenuOpen) {
-                openEscapeMenu();
+            if (!escapeMenu.isDisplayed) {
+                openMenu(escapeMenu);
             }
             // Closes escape menu
             else {
-                closeEscapeMenu();
+                closeMenu(escapeMenu);
             }
         }
     }
