@@ -1,6 +1,5 @@
 import processing.core.PApplet;
 import processing.core.PFont;
-
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -8,11 +7,14 @@ import java.util.List;
 
 public class Window extends PApplet {
 
-    static int WINDOW_WIDTH = 1500;  // Width of the sketch window in pixels
-    static int WINDOW_HEIGHT = 1000; // Height of the sketch window in pixels
+    private static int[] RESOLUTION_WIDTHS = {640, 1280, 1920};
+    private static int[] RESOLUTION_HEIGHTS = {480, 720, 1080};
+
+    static int WINDOW_WIDTH = 1280;  // Width of the sketch window in pixels
+    static int WINDOW_HEIGHT = 720; // Height of the sketch window in pixels
 
     private static float infoBoxWidth = Window.WINDOW_WIDTH / 5;    // Width of body info menu in relation to window
-    private static float infoBoxHeight = Window.WINDOW_HEIGHT / 20; // Height of body info menu in relation to window
+    private static float infoBoxHeight = Window.WINDOW_HEIGHT / 10; // Height of body info menu in relation to window
 
     private static DecimalFormat velocityFormat = new DecimalFormat("0.000"); // Used for formatting velocity
     static DecimalFormat timeFormat = new DecimalFormat("00"); // Used for formatting time output
@@ -20,15 +22,13 @@ public class Window extends PApplet {
     private PFont font;
     private PFont buttonFont;
 
-    /*private static List<Button> visibleButtons = new ArrayList<>(); // List of buttons on screen (for checking if user clicks on a button)
-    private static List<Button> escapeMenuButtons = new ArrayList<>();
-
-    private static boolean escapeMenuOpen = false; // Holds whether user is currently in the escape menu
-    private static boolean displayingMenu = false;*/
+    private boolean stayPaused; // Tracks whether simulation is paused before menu is opened
 
     private static Menu currentlyDisplayedMenu;
+    private static List<Menu> menus = new ArrayList<>();
     private static Menu escapeMenu = new Menu(0xFF000000);
     private static Menu optionsMenu = new Menu(0xFF000000);
+    private static Menu videoOptionsMenu = new Menu(0xFF000000);
 
     // Escape menu button declarations
     private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
@@ -45,10 +45,11 @@ public class Window extends PApplet {
                                                 Button.action.QUIT, null);
 
     // Options menu button declarations
+    private static int viewedResolutionIndex = 1;
     private static Button displaySizeSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                         WINDOW_WIDTH / 3, WINDOW_HEIGHT / 10, "Display size",
                                                         255, 0xFF282828, 0x00000000,
-                                                        Button.action.OPEN_MENU, null);
+                                                        Button.action.OPEN_MENU, videoOptionsMenu);
     private static Button keyboardLayoutSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                         WINDOW_WIDTH / 3, WINDOW_HEIGHT * 7 / 20, "Keyboard layout",
                                                         255, 0xFF282828, 0x00000000,
@@ -57,15 +58,52 @@ public class Window extends PApplet {
                                                         WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Controls",
                                                         255, 0xFF282828, 0x00000000,
                                                         Button.action.OPEN_MENU, null);
+    private static Button returnToEscapeMenu = new Button(WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10,
+                                                          WINDOW_WIDTH / 20, WINDOW_HEIGHT * 17 / 20, "Back",
+                                                        255, 0xFF282828, 0x00000000,
+                                                        Button.action.OPEN_MENU, escapeMenu);
+
+    // Video settings menu text
+    private static MenuText videoSettingsText = new MenuText(WINDOW_WIDTH  * 2 / 5, WINDOW_HEIGHT / 5,
+                                                            WINDOW_WIDTH / 5, WINDOW_HEIGHT / 5,
+                                                            "Resolution", 255);
+    private static MenuText resolutionText = new MenuText(WINDOW_WIDTH * 3 / 7, WINDOW_HEIGHT / 3,
+                                                        WINDOW_WIDTH / 7, WINDOW_HEIGHT / 6,
+                                                        displayResolution(viewedResolutionIndex), 255);
+    private static Button incrementResolutionList = new Button(WINDOW_WIDTH / 20, (WINDOW_WIDTH / 20) * (WINDOW_WIDTH / WINDOW_HEIGHT),
+                                                                WINDOW_WIDTH * 33 / 56, WINDOW_HEIGHT * 3 / 8,
+                                                                "+", 255, 0xFF282828,
+                                                                0x00000000, Button.action.SCROLL_RIGHT, null);
+    private static Button decrementResolutionList = new Button(WINDOW_WIDTH / 20, (WINDOW_WIDTH / 20) * (WINDOW_WIDTH / WINDOW_HEIGHT),
+                                                            WINDOW_WIDTH * 5 / 14, WINDOW_HEIGHT * 3 / 8,
+                                                            "-", 255, 0xFF282828,
+                                                            0x00000000, Button.action.SCROLL_LEFT, null);
+    private static Button applyResolutionChange = new Button(WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10,
+                                                            WINDOW_WIDTH * 17 / 20, WINDOW_HEIGHT * 17 / 20, "Apply",
+                                                            255, 0xFF282828, 0x00000000,
+                                                            Button.action.CHANGE_RESOLUTION, null);
+    private static Button returnToOptionsMenu = new Button(WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10,
+                                                            WINDOW_WIDTH / 20, WINDOW_HEIGHT * 17 / 20, "Back",
+                                                            255, 0xFF282828, 0x00000000,
+                                                            Button.action.OPEN_MENU, optionsMenu);
 
 
     public void setup() {
+        surface.setResizable(true);
+
         // Fonts
         font = createFont("Arial", 12, true);
         buttonFont = createFont("Arial", 24, true);
 
+        // Add buttons and texts to simulation menus
         escapeMenu.addButtons(resumeButton, optionsButton, quitButton);
-        optionsMenu.addButtons(displaySizeSetup, keyboardLayoutSetup, viewControls);
+        optionsMenu.addButtons(displaySizeSetup, keyboardLayoutSetup, viewControls, returnToEscapeMenu);
+        videoOptionsMenu.addTexts(videoSettingsText, resolutionText);
+        videoOptionsMenu.addButtons(returnToOptionsMenu, incrementResolutionList, decrementResolutionList, applyResolutionChange);
+
+        menus.add(escapeMenu);
+        menus.add(optionsMenu);
+        menus.add(videoOptionsMenu);
     }
 
     public void settings() {
@@ -73,6 +111,15 @@ public class Window extends PApplet {
     }
 
     public void draw() {
+        // Window resized
+        if (WINDOW_WIDTH != width || WINDOW_HEIGHT != height) {
+            for (Menu menu: menus) {
+                menu.resizeComponents(WINDOW_WIDTH, WINDOW_HEIGHT, width, height);
+            }
+            WINDOW_WIDTH = width;
+            WINDOW_HEIGHT = height;
+            redraw();
+        }
 
         // Draws currently displayed menu
         if (currentlyDisplayedMenu != null) {
@@ -117,14 +164,39 @@ public class Window extends PApplet {
 
     // Draws a single button on the screen
     private void drawButton(Button button) {
-        fill(button.getColour());
-        stroke(button.getBorderColour());
-        rect(button.getXPos(), button.getYPos(),  button.getWidth(), button.getHeight());
-        fill(button.getTextColour());
+        fill(button.colour);
+        stroke(button.borderColour);
+        rect(button.xPos, button.yPos,  button.width, button.height);
+        fill(button.textColour);
         stroke(0x00000000);
         textAlign(CENTER);
         textFont(buttonFont);
-        text(button.getText(), button.getXPos() + (button.getWidth() / 2), button.getYPos() + (button.getHeight() / 2));
+        text(button.text, button.xPos + (button.width / 2), button.yPos + (button.height / 2));
+    }
+
+    private void resizeText(MenuText text) {
+        textSize(text.size);
+        while (textWidth(text.text) > text.width) {
+            text.size--;
+            textSize(text.size);
+        }
+    }
+
+    private void drawText(MenuText text) {
+        resizeText(text);
+        fill(text.colour);
+        stroke(0x00000000);
+        textAlign(CENTER);
+        textFont(font);
+        textSize(text.size);
+        text(text.text, text.xPos + (text.width / 2), text.yPos + (text.height * 2 / 3)); // Dunno why this works
+        //drawTextDebugBox(text);
+    }
+
+    private void drawTextDebugBox(MenuText text) {
+        noFill();
+        stroke(255);
+        rect(text.xPos, text.yPos, text.width, text.height);
     }
 
     // Draws a box with information about the currently selected body in the bottom right of the screen
@@ -154,6 +226,7 @@ public class Window extends PApplet {
 
     // Opens the specified menu
     private void openMenu(Menu menu) {
+        stayPaused = Main.paused;
         Main.paused = true;
         menu.isDisplayed = true;
         currentlyDisplayedMenu = menu;
@@ -168,7 +241,7 @@ public class Window extends PApplet {
         }
         else {
             currentlyDisplayedMenu = null;
-            Main.paused = false;
+            Main.paused = stayPaused;
         }
     }
 
@@ -177,6 +250,13 @@ public class Window extends PApplet {
         for (Button button: menu.menuButtons) {
             drawButton(button);
         }
+        for (MenuText text: menu.menuTexts) {
+            drawText(text);
+        }
+    }
+
+    private static String displayResolution(int index) {
+        return(RESOLUTION_WIDTHS[index] + "x" + RESOLUTION_HEIGHTS[index]);
     }
 
     private void buttonPress(Button button) {
@@ -190,12 +270,28 @@ public class Window extends PApplet {
         else if (action == Button.action.OPEN_MENU && button.nextMenu != null) {
             openMenu(button.nextMenu);
         }
+        else if (action == Button.action.SCROLL_RIGHT && viewedResolutionIndex != 2) {
+            viewedResolutionIndex++;
+            resolutionText.text = displayResolution(viewedResolutionIndex);
+        }
+        else if (action == Button.action.SCROLL_LEFT && viewedResolutionIndex != 0) {
+            viewedResolutionIndex--;
+            resolutionText.text = displayResolution(viewedResolutionIndex);
+        }
+        else if (action == Button.action.CHANGE_RESOLUTION && WINDOW_WIDTH != RESOLUTION_WIDTHS[viewedResolutionIndex]) {
+            for (Menu menu: menus) {
+                menu.resizeComponents(WINDOW_WIDTH, WINDOW_HEIGHT, RESOLUTION_WIDTHS[viewedResolutionIndex], RESOLUTION_HEIGHTS[viewedResolutionIndex]);
+            }
+            WINDOW_WIDTH = RESOLUTION_WIDTHS[viewedResolutionIndex];
+            WINDOW_HEIGHT = RESOLUTION_HEIGHTS[viewedResolutionIndex];
+            surface.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        }
     }
 
     public void mousePressed() {
         if (currentlyDisplayedMenu != null) {
             for (Button button: currentlyDisplayedMenu.menuButtons) {
-                if (button.isHighlighted()) {
+                if (button.highlighted) {
                     buttonPress(button);
                 }
             }
