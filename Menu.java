@@ -9,7 +9,7 @@ public class Menu {
     public List<MenuText> menuTexts = new ArrayList<>(); // List of texts to be displayed in the menu
     public Menu menuToReturnTo;                          // Menu to display (if any) when this menu is exited
 
-    public boolean isDisplayed = false;
+    public boolean isDisplayed = false; // This might be useless, but it holds whether the menu is on screen
 
     public Menu(int backgroundColour, Button... buttons) {
         bgColour = backgroundColour;
@@ -29,31 +29,32 @@ public class Menu {
         }
     }
 
+    // Adds a variable number of buttons to the menu's list of buttons
     public void addButtons(Button... buttons) {
         menuButtons.addAll(Arrays.asList(buttons));
     }
 
+    // Adds a variable number of texts to the menu's list of texts
     public void addTexts(MenuText... texts) {
         menuTexts.addAll(Arrays.asList(texts));
     }
 
+    // Changes the sizes and positions of all components to remain consistent with resolution change
     public void resizeComponents(int oldWidth, int oldHeight, int newWidth, int newHeight) {
         float widthRatio = (float) newWidth / (float) oldWidth;
         float heightRatio = (float) newHeight / (float) oldHeight;
-        //System.out.println(newWidth + " / " + oldWidth + ": " + widthRatio + " " + newHeight + " / " + oldHeight + ": " + heightRatio);
         for (Button button: menuButtons) {
-            //System.out.println("Old button (" + button.xPos + ", " + button.yPos + " W: " + button.width + " H: " + button.height);
             button.xPos *= widthRatio;
             button.width *= widthRatio;
             button.yPos *= heightRatio;
             button.height *= heightRatio;
-            //System.out.println("New button (" + button.xPos + ", " + button.yPos + " W: " + button.width + " H: " + button.height);
         }
         for (MenuText text: menuTexts) {
             text.xPos *= widthRatio;
             text.width *= widthRatio;
             text.yPos *= heightRatio;
             text.height *= heightRatio;
+            text.size *= widthRatio;
         }
     }
 }

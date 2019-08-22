@@ -7,8 +7,9 @@ import java.util.List;
 
 public class Window extends PApplet {
 
-    private static int[] RESOLUTION_WIDTHS = {640, 1280, 1920};
-    private static int[] RESOLUTION_HEIGHTS = {480, 720, 1080};
+    private static int[] RESOLUTION_WIDTHS = {640, 1280, 1920}; // List of supported resolution widths
+    private static int[] RESOLUTION_HEIGHTS = {480, 720, 1080}; // List of supported resolution heights
+    private static int viewedResolutionIndex = 1; // Holds which resolution is currently viewed in resolution menu
 
     static int WINDOW_WIDTH = 1280;  // Width of the sketch window in pixels
     static int WINDOW_HEIGHT = 720; // Height of the sketch window in pixels
@@ -19,16 +20,16 @@ public class Window extends PApplet {
     private static DecimalFormat velocityFormat = new DecimalFormat("0.000"); // Used for formatting velocity
     static DecimalFormat timeFormat = new DecimalFormat("00"); // Used for formatting time output
 
-    private PFont font;
-    private PFont buttonFont;
+    private PFont font;       // Default font used for drawing text
+    private PFont buttonFont; // Font used for drawing buttons
 
     private boolean stayPaused; // Tracks whether simulation is paused before menu is opened
 
-    private static Menu currentlyDisplayedMenu;
-    private static List<Menu> menus = new ArrayList<>();
-    private static Menu escapeMenu = new Menu(0xFF000000);
-    private static Menu optionsMenu = new Menu(0xFF000000);
-    private static Menu videoOptionsMenu = new Menu(0xFF000000);
+    private static Menu currentlyDisplayedMenu; // Holds the menu currently on screen
+    private static List<Menu> menus = new ArrayList<>(); // Holds all menus in the simulation
+    private static Menu escapeMenu = new Menu(0xFF000000); // Menu opened when user pushes escape
+    private static Menu optionsMenu = new Menu(0xFF000000); // Options menu
+    private static Menu videoOptionsMenu = new Menu(0xFF000000); // Menu for changing resolution
 
     // Escape menu button declarations
     private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
@@ -45,7 +46,6 @@ public class Window extends PApplet {
                                                 Button.action.QUIT, null);
 
     // Options menu button declarations
-    private static int viewedResolutionIndex = 1;
     private static Button displaySizeSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                         WINDOW_WIDTH / 3, WINDOW_HEIGHT / 10, "Display size",
                                                         255, 0xFF282828, 0x00000000,
@@ -87,9 +87,10 @@ public class Window extends PApplet {
                                                             255, 0xFF282828, 0x00000000,
                                                             Button.action.OPEN_MENU, optionsMenu);
 
-
+    // Window settings
     public void setup() {
         surface.setResizable(true);
+        surface.setTitle("Java Orbital Simulator");
 
         // Fonts
         font = createFont("Arial", 12, true);
@@ -101,15 +102,18 @@ public class Window extends PApplet {
         videoOptionsMenu.addTexts(videoSettingsText, resolutionText);
         videoOptionsMenu.addButtons(returnToOptionsMenu, incrementResolutionList, decrementResolutionList, applyResolutionChange);
 
+        // Append initialized menus to list of menus
         menus.add(escapeMenu);
         menus.add(optionsMenu);
         menus.add(videoOptionsMenu);
     }
 
+    // Sets initial resolution and window title
     public void settings() {
         size(WINDOW_WIDTH, WINDOW_HEIGHT);
     }
 
+    // Draws one frame on the screen
     public void draw() {
         // Window resized
         if (WINDOW_WIDTH != width || WINDOW_HEIGHT != height) {
@@ -174,6 +178,7 @@ public class Window extends PApplet {
         text(button.text, button.xPos + (button.width / 2), button.yPos + (button.height / 2));
     }
 
+    // Changes size of text to fit text in specified text box size
     private void resizeText(MenuText text) {
         textSize(text.size);
         while (textWidth(text.text) > text.width) {
@@ -182,6 +187,7 @@ public class Window extends PApplet {
         }
     }
 
+    // Draws text on the screen
     private void drawText(MenuText text) {
         resizeText(text);
         fill(text.colour);
@@ -193,6 +199,7 @@ public class Window extends PApplet {
         //drawTextDebugBox(text);
     }
 
+    // Draws the (typically invisible) text box around drawn text for debugging purposes
     private void drawTextDebugBox(MenuText text) {
         noFill();
         stroke(255);
@@ -226,7 +233,6 @@ public class Window extends PApplet {
 
     // Opens the specified menu
     private void openMenu(Menu menu) {
-        stayPaused = Main.paused;
         Main.paused = true;
         menu.isDisplayed = true;
         currentlyDisplayedMenu = menu;
@@ -245,6 +251,7 @@ public class Window extends PApplet {
         }
     }
 
+    // Draws a menu's components on the screen
     private void displayMenu(Menu menu) {
         background(menu.bgColour);
         for (Button button: menu.menuButtons) {
@@ -255,10 +262,12 @@ public class Window extends PApplet {
         }
     }
 
+    // Returns a string with a resolution's width and height in width x height format
     private static String displayResolution(int index) {
         return(RESOLUTION_WIDTHS[index] + "x" + RESOLUTION_HEIGHTS[index]);
     }
 
+    // Interprets a button's action and executes a function in the simulation accordingly
     private void buttonPress(Button button) {
         Button.action action = button.getAction();
         if (action == Button.action.RETURN) {
@@ -288,6 +297,7 @@ public class Window extends PApplet {
         }
     }
 
+    // Runs when the mouse is pressed
     public void mousePressed() {
         if (currentlyDisplayedMenu != null) {
             for (Button button: currentlyDisplayedMenu.menuButtons) {
@@ -323,10 +333,12 @@ public class Window extends PApplet {
         }
     }
 
+    // Runs when the mouse is released
     public void mouseReleased() {
-        Main.panning = false;
+        //Main.panning = false;
     }
 
+    // Runs when any keyboard key is pressed
     public void keyPressed() {
         if (keyCode == KBInput.panUpKey) {
             Main.panningUp = true;
@@ -380,6 +392,7 @@ public class Window extends PApplet {
             key = 0; // Prevents Processing from closing the sketch (as it typically does when ESC is pushed)
             // Opens escape menu
             if (!escapeMenu.isDisplayed) {
+                stayPaused = Main.paused;
                 openMenu(escapeMenu);
             }
             // Closes escape menu
@@ -389,6 +402,7 @@ public class Window extends PApplet {
         }
     }
 
+    // Runs when any keyboard key is released
     public void keyReleased() {
         if (keyCode == KBInput.panUpKey) {
             Main.panningUp = false;

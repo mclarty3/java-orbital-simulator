@@ -13,6 +13,7 @@ public class KBInput {
     public static int centerOnBodyKey;
     public static int addOrbitingBodyKey;
 
+    // Supported layouts
     enum keyboardLayouts {
         QWERTY,
         DVORAK,

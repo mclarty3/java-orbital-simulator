@@ -21,7 +21,8 @@ public class Button {
     int textColour;       // Colour of the button text
     int borderColour;     // Border colour of the button
     boolean highlighted;  // Holds whether button is currently highlighted by cursor
-    action onButtonPress; // Action to be done in simulation/menu when button is pressed
+
+    private action onButtonPress; // Action to be done in simulation/menu when button is pressed
 
     Menu nextMenu;
 
@@ -42,11 +43,12 @@ public class Button {
         nextMenu = goToMenu;
     }
 
-
+    // Returns true if the provided (x,y) coordinates are located within the calling button
     boolean mouseOnButton(int x, int y) {
         return((x >= xPos) && (x <= xPos + width) && (y >= yPos) && (y <= yPos + height));
     }
 
+    // Changes the colour of the button to indicate the mouse is hovering over it
     void highlightColour() {
         highlighted = true;
         String hexString = Integer.toHexString(colour);
@@ -64,6 +66,7 @@ public class Button {
         colour = (int)longHex;
     }
 
+    // Returns the colour of a button to its normal colour after being highlighted
     void unHighlightColour() {
         highlighted = false;
         String hexString = Integer.toHexString(colour);
@@ -81,6 +84,7 @@ public class Button {
         colour = (int)longHex;
     }
 
+    // Returns a button's respective action
     action getAction() {
         return onButtonPress;
     }

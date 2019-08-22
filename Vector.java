@@ -19,11 +19,13 @@ public class Vector {
         y += other.y;
     }
 
+    // Returns a scalar multiple of the calling vector and the scalar n
     public Vector times(double n) {
         Vector temp = new Vector(x * n, y * n);
         return temp;
     }
 
+    // Normalizes calling vector (reduces to magnitude = 1)
     public void normalize() {
         double mag = getMagnitude();
         x /= mag;
@@ -36,6 +38,7 @@ public class Vector {
         y = 0;
     }
 
+    // Returns a vector pointing from the calling vector towards other
     public Vector getDifference(Vector other) {
         Vector temp = new Vector(other.x - x, other.y - y);
         return temp;

@@ -13,44 +13,44 @@ public class Main {
 
     // Window variables
     public static Window window = new Window();
-    public static double AU_TO_WINDOW_SCALAR = 5;
+    public static double AU_TO_WINDOW_SCALAR = 5; // Determines how many AU's are visible in the width of the window
     public static double SCALE = Window.WINDOW_WIDTH / (AU_TO_WINDOW_SCALAR * AU); // Used to convert real-life scale to window scale for drawing
 
     // Simulation timing variables
     public static double fps = 1000; // Turns out if I make this ridiculously high, the simulation runs much better!
-    public static boolean paused = false;
+    public static boolean paused = false; // Holds if the simulation is paused
     public static double TIMESCALE = 10; // Time scale at simulation start in days per second
-    public static boolean changingTime = false;
+    public static boolean changingTime = false; // Prevents the time scale from changing more than once per key press
 
     // Selected body
-    public static Body selectedBody = null;
-    public static boolean focusedOnBody = false;
-    public static Body focusedBody = null;
+    public static Body selectedBody = null;      // The currently selected body (displays info in bottom right)
+    public static boolean focusedOnBody = false; // Holds whether a body is currently centered
+    public static Body focusedBody = null;       // Body currently being centered on the screen
 
     // Add orbiting body
-    public static boolean selectingOrbitedBody = false;
-    public static boolean addingOrbitingBody = false;
+    public static boolean selectingOrbitedBody = false; // Holds whether player is selecting body to place orbiting body around
+    public static boolean addingOrbitingBody = false;   // Holds whether player is positioning orbiting body
 
     // These variables keep track of if the screen is panning, to allow for simultaneous multi-directional panning
     public static boolean panningUp = false;
     public static boolean panningDown = false;
     public static boolean panningLeft = false;
     public static boolean panningRight = false;
-    public static boolean panning; // To be used for future mouse panning, stay tuned!
+    //public static boolean panning; // To be used for future mouse panning, stay tuned!
 
     // These variables keep track of if the camera is zooming, for smooth zooming in/out
     public static boolean zoomingIn = false;
     public static boolean zoomingOut = false;
 
     // Stores all bodies currently active in the simulation
-    public static List<Body> currentBodies = new ArrayList<>(); // Variable declarations
+    public static List<Body> currentBodies = new ArrayList<>();
 
     public static void main(String[] args) {
         DateTime startDate = new DateTime(0, 0, 0, 0, 0, 0, 2000);
 
-        KBInput.setKeyboardLayout(KBInput.keyboardLayouts.DVORAK);
+        KBInput.setKeyboardLayout(KBInput.keyboardLayouts.DVORAK); // Dvorak is the superior layout, so it's the default
         // Opens window for simulation
-        String[] windowName = {"Orbital Simulator"};
+        String[] windowName = {""};
         PApplet.runSketch(windowName, window);
 
         // Creates body in simulation and adds them to list of bodies
