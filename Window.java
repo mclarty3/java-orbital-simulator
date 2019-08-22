@@ -3,22 +3,47 @@ import processing.core.PFont;
 
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Window extends PApplet {
 
-    public static int WINDOW_WIDTH = 1500;
-    public static int WINDOW_HEIGHT = 1000;
+    static int WINDOW_WIDTH = 1500;  // Width of the sketch window in pixels
+    static int WINDOW_HEIGHT = 1000; // Height of the sketch window in pixels
 
-    public static float infoBoxWidth = Window.WINDOW_WIDTH / 5;
-    public static float infoBoxHeight = Window.WINDOW_HEIGHT / 20;
+    private static float infoBoxWidth = Window.WINDOW_WIDTH / 5;    // Width of body info menu in relation to window
+    private static float infoBoxHeight = Window.WINDOW_HEIGHT / 20; // Height of body info menu in relation to window
 
-    public static DecimalFormat velocityFormat = new DecimalFormat("0.000"); // Used for formatting velocity
-    public static DecimalFormat timeFormat = new DecimalFormat("00"); // Used for formatting time output
+    private static DecimalFormat velocityFormat = new DecimalFormat("0.000"); // Used for formatting velocity
+    static DecimalFormat timeFormat = new DecimalFormat("00"); // Used for formatting time output
+
+    private PFont font;
+    private PFont buttonFont;
+
+    private static List<Button> visibleButtons = new ArrayList<>(); // List of buttons on screen (for checking if user clicks on a button)
+    private static List<Button> escapeMenuButtons = new ArrayList<>();
+
+    private static boolean escapeMenuOpen = false; // Holds whether user is currently in the escape menu
+
+    // Escape menu button declarations
+    private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT / 10, "Resume",
+                                                    255, 0xFF282828, 0x00000000);
+    private static Button optionsButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT * 7 / 20, "Options",
+                                                    255, 0xFF282828, 0x00000000);
+    private static Button quitButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
+                                                WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Quit",
+                                                255, 0xFF282828, 0x00000000);
 
     public void setup() {
-        noLoop();
-        PFont font = createFont("Arial", 12, true);
+        // Fonts
+        font = createFont("Arial", 12, true);
+        buttonFont = createFont("Arial", 24, true);
+        // Escape menu buttons
+        escapeMenuButtons.add(resumeButton);
+        escapeMenuButtons.add(optionsButton);
+        escapeMenuButtons.add(quitButton);
     }
 
     public void settings() {
@@ -26,21 +51,35 @@ public class Window extends PApplet {
     }
 
     public void draw() {
-        float radiusDrawSize;
-        background(0);
-        List<Body> bodiesToDraw = Main.currentBodies;
-        stroke(0x00000000);
-
-        // Draw celestial bodies
-        drawBodies(bodiesToDraw);
-
-        // Draw selected body menu (if there IS a selected body)
-        if (Main.selectedBody != null) {
-            drawSelectedBodyMenu(Main.selectedBody);
+        // Highlights button if mouse hovering over
+        for (Button button: visibleButtons) {
+            if (button.isHighlighted() && !button.mouseOnButton(mouseX, mouseY)) {
+                button.unHighlightColour();
+            }
+            else if (!button.isHighlighted() && button.mouseOnButton(mouseX, mouseY)) {
+                button.highlightColour();
+            }
         }
+        // Draws escape menu
+        if (escapeMenuOpen) {
+            drawEscapeMenu();
+        }
+        else {
+            background(0);
+            List<Body> bodiesToDraw = Main.currentBodies;
+            stroke(0x00000000);
 
-        if (Main.selectedBody != null && Main.addingOrbitingBody) {
-            drawOrbitalPlacementCircle(Main.selectedBody);
+            // Draw celestial bodies
+            drawBodies(bodiesToDraw);
+
+            // Draw selected body menu (if there IS a selected body)
+            if (Main.selectedBody != null) {
+                drawSelectedBodyMenu(Main.selectedBody);
+            }
+
+            if (Main.selectedBody != null && Main.addingOrbitingBody) {
+                drawOrbitalPlacementCircle(Main.selectedBody);
+            }
         }
     }
 
@@ -59,12 +98,32 @@ public class Window extends PApplet {
         }
     }
 
+    // Draws a single button on the screen
+    private void drawButton(Button button) {
+        fill(button.getColour());
+        stroke(button.getBorderColour());
+        rect(button.getXPos(), button.getYPos(),  button.getWidth(), button.getHeight());
+        fill(button.getTextColour());
+        stroke(0x00000000);
+        textAlign(CENTER);
+        textFont(buttonFont);
+        text(button.getText(), button.getXPos() + (button.getWidth() / 2), button.getYPos() + (button.getHeight() / 2));
+    }
+
+    // Draws list of all visible buttons on screen
+    private void drawVisibleButtons() {
+        for (Button button: visibleButtons) {
+            drawButton(button);
+        }
+    }
+
     // Draws a box with information about the currently selected body in the bottom right of the screen
     private void drawSelectedBodyMenu(Body body) {
         fill(0x99808080);
         rect(WINDOW_WIDTH - infoBoxWidth, WINDOW_HEIGHT - infoBoxHeight, infoBoxWidth, infoBoxHeight);
         fill(0);
         textAlign(CENTER);
+        textFont(font);
         text(body.name, Window.WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 20);
         text("Velocity: " + velocityFormat.format(body.velocity.getMagnitude()) + " m/s", WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 40);
     }
@@ -83,12 +142,42 @@ public class Window extends PApplet {
                 (float) radius, (float) radius);
     }
 
+    // Draws menu pulled up when the user presses escape
+    private void drawEscapeMenu() {
+        background(0);
+        drawVisibleButtons();
+    }
+
+    private void openEscapeMenu() {
+        Main.paused = true;
+        escapeMenuOpen = true;
+        visibleButtons.addAll(escapeMenuButtons);
+    }
+
+    private void closeEscapeMenu() {
+        visibleButtons.removeAll(escapeMenuButtons);
+        escapeMenuOpen = false;
+        Main.paused = false;
+    }
+
     public void mousePressed() {
+        if (escapeMenuOpen)  {
+            if (resumeButton.isHighlighted()) {
+                closeEscapeMenu();
+            }
+            else if (optionsButton.isHighlighted()) {
+                // Do nothing rn
+            }
+            else if (quitButton.isHighlighted()) {
+                exit();
+            }
+        }
         if (mouseButton == RIGHT) {
             Main.addingOrbitingBody = false;
             Main.selectingOrbitedBody = false;
         }
         else {
+            // Mouse action if adding orbiting body
             if (Main.addingOrbitingBody) {
                 Main.addingOrbitingBody = false;
                 Vector planetPos = new Vector(mouseX, mouseY);
@@ -161,6 +250,17 @@ public class Window extends PApplet {
         }
         else if (keyCode == KBInput.addOrbitingBodyKey) {
             Main.selectingOrbitedBody = true;
+        }
+        else if (keyCode == KeyEvent.VK_ESCAPE) {
+            key = 0; // Prevents Processing from closing the sketch (as it typically does when ESC is pushed)
+            // Opens escape menu
+            if (!escapeMenuOpen) {
+                openEscapeMenu();
+            }
+            // Closes escape menu
+            else {
+                closeEscapeMenu();
+            }
         }
     }
 
