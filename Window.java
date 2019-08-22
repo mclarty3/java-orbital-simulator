@@ -30,6 +30,7 @@ public class Window extends PApplet {
     private static Menu escapeMenu = new Menu(0xFF000000); // Menu opened when user pushes escape
     private static Menu optionsMenu = new Menu(0xFF000000); // Options menu
     private static Menu videoOptionsMenu = new Menu(0xFF000000); // Menu for changing resolution
+    private static Menu keyboardLayoutMenu = new Menu(0xFF000000); // Menu for changing keyboard layout
 
     // Escape menu button declarations
     private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
@@ -53,9 +54,9 @@ public class Window extends PApplet {
     private static Button keyboardLayoutSetup = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                         WINDOW_WIDTH / 3, WINDOW_HEIGHT * 7 / 20, "Keyboard layout",
                                                         255, 0xFF282828, 0x00000000,
-                                                        Button.action.OPEN_MENU, null);
+                                                        Button.action.OPEN_MENU, keyboardLayoutMenu);
     private static Button viewControls = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
-                                                        WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Controls",
+                                                        WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Controls (doesn't work)",
                                                         255, 0xFF282828, 0x00000000,
                                                         Button.action.OPEN_MENU, null);
     private static Button returnToEscapeMenu = new Button(WINDOW_WIDTH / 10, WINDOW_HEIGHT / 10,
@@ -87,6 +88,28 @@ public class Window extends PApplet {
                                                             255, 0xFF282828, 0x00000000,
                                                             Button.action.OPEN_MENU, optionsMenu);
 
+    // Keyboard layout settings menu
+    private static Button qwertyButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 6,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT / 36,
+                                                    "QWERTY", 255, 0xFF282828,
+                                                    0x00000000, Button.action.CHANGE_LAYOUT, null);
+    private static Button dvorakButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 6,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT * 8 / 36,
+                                                    "Dvorak", 255, 0xFF282828,
+                                                    0x00000000, Button.action.CHANGE_LAYOUT, null);
+    private static Button azertyButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 6,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT * 15 / 36,
+                                                    "AZERTY", 255, 0xFF282828,
+                                                    0x00000000, Button.action.CHANGE_LAYOUT, null);
+    private static Button qwertzButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 6,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT * 22 / 36,
+                                                    "QWERTZ", 255, 0xFF282828,
+                                                    0x00000000, Button.action.CHANGE_LAYOUT, null);
+    private static Button colemakButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 6,
+                                                    WINDOW_WIDTH / 3, WINDOW_HEIGHT * 29 / 36,
+                                                    "Colemak", 255, 0xFF282828,
+                                                    0x00000000, Button.action.CHANGE_LAYOUT, null);
+
     // Window settings
     public void setup() {
         surface.setResizable(true);
@@ -101,11 +124,13 @@ public class Window extends PApplet {
         optionsMenu.addButtons(displaySizeSetup, keyboardLayoutSetup, viewControls, returnToEscapeMenu);
         videoOptionsMenu.addTexts(videoSettingsText, resolutionText);
         videoOptionsMenu.addButtons(returnToOptionsMenu, incrementResolutionList, decrementResolutionList, applyResolutionChange);
+        keyboardLayoutMenu.addButtons(returnToOptionsMenu, qwertyButton, dvorakButton, azertyButton, qwertzButton, colemakButton);
 
         // Append initialized menus to list of menus
         menus.add(escapeMenu);
         menus.add(optionsMenu);
         menus.add(videoOptionsMenu);
+        menus.add(keyboardLayoutMenu);
     }
 
     // Sets initial resolution and window title
@@ -295,6 +320,23 @@ public class Window extends PApplet {
             WINDOW_HEIGHT = RESOLUTION_HEIGHTS[viewedResolutionIndex];
             surface.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         }
+        else if (action == Button.action.CHANGE_LAYOUT) {
+            if (button.text.equals("QWERTY")) {
+                KBInput.setKeyboardLayout(KBInput.keyboardLayouts.QWERTY);
+            }
+            else if (button.text.equals("Dvorak")) {
+                KBInput.setKeyboardLayout(KBInput.keyboardLayouts.DVORAK);
+            }
+            else if (button.text.equals("AZERTY")) {
+                KBInput.setKeyboardLayout(KBInput.keyboardLayouts.AZERTY);
+            }
+            else if (button.text.equals("QWERTZ")) {
+                KBInput.setKeyboardLayout(KBInput.keyboardLayouts.QWERTZ);
+            }
+            else if (button.text.equals("Colemak")) {
+                KBInput.setKeyboardLayout(KBInput.keyboardLayouts.COLEMAK);
+            }
+        }
     }
 
     // Runs when the mouse is pressed
@@ -335,7 +377,6 @@ public class Window extends PApplet {
 
     // Runs when the mouse is released
     public void mouseReleased() {
-        //Main.panning = false;
     }
 
     // Runs when any keyboard key is pressed

@@ -9,7 +9,8 @@ public class Button {
         OPEN_MENU,
         CHANGE_RESOLUTION,
         SCROLL_LEFT,
-        SCROLL_RIGHT
+        SCROLL_RIGHT,
+        CHANGE_LAYOUT
     }
 
     float width;          // Width of the button in pixels
