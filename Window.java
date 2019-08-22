@@ -30,8 +30,25 @@ public class Window extends PApplet {
         background(0);
         List<Body> bodiesToDraw = Main.currentBodies;
         stroke(0x00000000);
+
         // Draw celestial bodies
-        for (Body body: bodiesToDraw) {
+        drawBodies(bodiesToDraw);
+
+        // Draw selected body menu (if there IS a selected body)
+        if (Main.selectedBody != null) {
+            drawSelectedBodyMenu(Main.selectedBody);
+        }
+
+        if (Main.selectedBody != null && Main.addingOrbitingBody) {
+            drawOrbitalPlacementCircle(Main.selectedBody);
+        }
+    }
+
+    // Draws each body in list of bodies on the screen, relative to their position
+    private void drawBodies(List<Body> simulatedBodies) {
+        float radiusDrawSize;
+
+        for (Body body: simulatedBodies) {
             radiusDrawSize = (float) (body.radius * Main.SCALE);
             if (radiusDrawSize < 2) {
                 radiusDrawSize = 2;
@@ -40,46 +57,54 @@ public class Window extends PApplet {
             ellipse((float) ((WINDOW_WIDTH / 2) + body.position.x * Main.SCALE), (float) ((WINDOW_HEIGHT / 2) - body.position.y * Main.SCALE),
                     radiusDrawSize, radiusDrawSize);
         }
-        // Draw selected body menu (if there IS a selected body)
-        if (Main.selectedBody != null) {
-            fill(0x99808080);
-            rect(WINDOW_WIDTH - infoBoxWidth, WINDOW_HEIGHT - infoBoxHeight, infoBoxWidth, infoBoxHeight);
-            fill(0);
-            textAlign(CENTER);
-            text(Main.selectedBody.name, Window.WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 20);
-            text("Velocity: " + velocityFormat.format(Main.selectedBody.velocity.getMagnitude()) + " m/s", WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 40);
-        }
-        if (Main.addingOrbitingBody ) {
-            Vector mousePos = new Vector(mouseX, mouseY);
-            mousePos.toWorldSpace();
-            Vector planetPos = new Vector(Main.selectedBody.position.x, Main.selectedBody.position.y);
-            planetPos.toScreenSpace();
-            double radius = Main.selectedBody.position.getDifference(mousePos).getMagnitude() * Main.SCALE * 2;
-            noFill();
-            stroke(0xFFFFFFFF);
-            ellipse((float) ((WINDOW_WIDTH / 2) + Main.selectedBody.position.x * Main.SCALE),
-                    (float) ((WINDOW_HEIGHT / 2) - Main.selectedBody.position.y * Main.SCALE),
-                    (float) radius, (float) radius);
-        }
+    }
+
+    // Draws a box with information about the currently selected body in the bottom right of the screen
+    private void drawSelectedBodyMenu(Body body) {
+        fill(0x99808080);
+        rect(WINDOW_WIDTH - infoBoxWidth, WINDOW_HEIGHT - infoBoxHeight, infoBoxWidth, infoBoxHeight);
+        fill(0);
+        textAlign(CENTER);
+        text(body.name, Window.WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 20);
+        text("Velocity: " + velocityFormat.format(body.velocity.getMagnitude()) + " m/s", WINDOW_WIDTH - (infoBoxWidth / 2), WINDOW_HEIGHT - infoBoxHeight + 40);
+    }
+
+    // Draws a circle around selected body to determine where an added orbiting object will be placed
+    private void drawOrbitalPlacementCircle(Body orbitedBody) {
+        Vector mousePos = new Vector(mouseX, mouseY);
+        mousePos.toWorldSpace();
+        Vector planetPos = new Vector(orbitedBody.position.x, orbitedBody.position.y);
+        planetPos.toScreenSpace();
+        double radius = orbitedBody.position.getDifference(mousePos).getMagnitude() * Main.SCALE * 2;
+        noFill();
+        stroke(0xFFFFFFFF);
+        ellipse((float) ((WINDOW_WIDTH / 2) + orbitedBody.position.x * Main.SCALE),
+                (float) ((WINDOW_HEIGHT / 2) - orbitedBody.position.y * Main.SCALE),
+                (float) radius, (float) radius);
     }
 
     public void mousePressed() {
-        if (Main.addingOrbitingBody) {
+        if (mouseButton == RIGHT) {
             Main.addingOrbitingBody = false;
-            Vector planetPos = new Vector(mouseX, mouseY);
-            planetPos.toWorldSpace();
-            Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 10e6);
+            Main.selectingOrbitedBody = false;
         }
-        // Selects the clicked on body in the simulation
-        Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
-        // Checks if player is selecting a body to add an orbiting body around
-        if (Main.selectingOrbitedBody) {
-            if (Main.selectedBody != null) {
-                Main.selectingOrbitedBody = false;
-                Main.addingOrbitingBody = true;
-                System.out.println(Main.selectedBody.name + " selected, now choose where to add orbiting body");
-            } else {
-                Main.selectingOrbitedBody = false;
+        else {
+            if (Main.addingOrbitingBody) {
+                Main.addingOrbitingBody = false;
+                Vector planetPos = new Vector(mouseX, mouseY);
+                planetPos.toWorldSpace();
+                Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 10e6);
+            }
+            // Selects the clicked on body in the simulation
+            Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
+            // Checks if player is selecting a body to add an orbiting body around
+            if (Main.selectingOrbitedBody) {
+                if (Main.selectedBody != null) {
+                    Main.selectingOrbitedBody = false;
+                    Main.addingOrbitingBody = true;
+                } else {
+                    Main.selectingOrbitedBody = false;
+                }
             }
         }
     }
@@ -135,7 +160,6 @@ public class Window extends PApplet {
             }
         }
         else if (keyCode == KBInput.addOrbitingBodyKey) {
-            System.out.println("Selecting orbited body");
             Main.selectingOrbitedBody = true;
         }
     }
