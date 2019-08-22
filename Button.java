@@ -2,24 +2,28 @@ import org.jetbrains.annotations.Nullable;
 
 public class Button {
 
+    // Holds all possible actions that a button can do (interpreted in Window.java)
     enum action {
         RETURN,
         QUIT,
-        OPEN_MENU
+        OPEN_MENU,
+        CHANGE_RESOLUTION,
+        SCROLL_LEFT,
+        SCROLL_RIGHT
     }
 
-    private float width;
-    private float  height;
-    private float xPos;
-    private float yPos;
-    private int colour;
-    private String text;
-    private int textColour;
-    private int borderColour;
-    private boolean highlighted;
-    private action onButtonPress;
+    float width;          // Width of the button in pixels
+    float height;         // Height of the button in pixels
+    float xPos;           // X position of the top left corner of the button
+    float yPos;           // Y position of the top left corner of the button
+    int colour;           // Colour of the button background
+    String text;          // Text to be displayed in the button
+    int textColour;       // Colour of the button text
+    int borderColour;     // Border colour of the button
+    boolean highlighted;  // Holds whether button is currently highlighted by cursor
+    action onButtonPress; // Action to be done in simulation/menu when button is pressed
 
-    public Menu nextMenu;
+    Menu nextMenu;
 
 
     // If this button does not open up another menu, pass null to goToMenu. Simple as that!
@@ -38,80 +42,12 @@ public class Button {
         nextMenu = goToMenu;
     }
 
-    // Getters and setters
 
-    public float getWidth() {
-        return width;
-    }
-
-    public float getHeight() {
-        return height;
-    }
-    public float getXPos() {
-        return xPos;
-    }
-
-    public float getYPos() {
-        return yPos;
-    }
-
-    public int getColour() {
-        return colour;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public int getTextColour() {
-        return textColour;
-    }
-
-    public int getBorderColour() {
-        return borderColour;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
-    public void setXPos(float xPos) {
-        this.xPos = xPos;
-    }
-
-    public void setYPos(float yPos) {
-        this.yPos = yPos;
-    }
-
-    public void setColour(int colour) {
-        this.colour = colour;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void setTextColour(int textColour) {
-        this.textColour = textColour;
-    }
-
-    public void setBorderColour(int borderColour) {
-        this.borderColour = borderColour;
-    }
-
-    public boolean mouseOnButton(int x, int y) {
+    boolean mouseOnButton(int x, int y) {
         return((x >= xPos) && (x <= xPos + width) && (y >= yPos) && (y <= yPos + height));
     }
 
-    public boolean isHighlighted() {
-        return highlighted;
-    }
-
-    public void highlightColour() {
+    void highlightColour() {
         highlighted = true;
         String hexString = Integer.toHexString(colour);
         String convert;
@@ -128,7 +64,7 @@ public class Button {
         colour = (int)longHex;
     }
 
-    public void unHighlightColour() {
+    void unHighlightColour() {
         highlighted = false;
         String hexString = Integer.toHexString(colour);
         String convert;
@@ -145,7 +81,7 @@ public class Button {
         colour = (int)longHex;
     }
 
-    public action getAction() {
+    action getAction() {
         return onButtonPress;
     }
 }
