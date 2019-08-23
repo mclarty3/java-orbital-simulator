@@ -2,7 +2,7 @@ package main.java;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Button {
+class Button {
 
     // Holds all possible actions that a button can do (interpreted in Window.java)
     enum action {
@@ -31,7 +31,7 @@ public class Button {
 
 
     // If this button does not open up another menu, pass null to goToMenu. Simple as that!
-    public Button(float buttonWidth, float buttonHeight, float xPosition, float yPosition,
+    Button(float buttonWidth, float buttonHeight, float xPosition, float yPosition,
                   String buttonText, int buttonTextColour, int buttonColour, int buttonBorderColour,
                   action buttonPressAction, @Nullable Menu goToMenu) {
         width = buttonWidth;

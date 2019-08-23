@@ -2,18 +2,18 @@ package main.java;
 
 import java.awt.event.KeyEvent;
 
-public class KBInput {
+class KBInput {
 
-    public static int panUpKey;
-    public static int panDownKey;
-    public static int panLeftKey;
-    public static int panRightKey;
-    public static int increaseSimSpeedKey;
-    public static int decreaseSimSpeedKey;
-    public static int increaseZoomKey;
-    public static int decreaseZoomKey;
-    public static int centerOnBodyKey;
-    public static int addOrbitingBodyKey;
+    static int panUpKey;
+    static int panDownKey;
+    static int panLeftKey;
+    static int panRightKey;
+    static int increaseSimSpeedKey;
+    static int decreaseSimSpeedKey;
+    static int increaseZoomKey;
+    static int decreaseZoomKey;
+    static int centerOnBodyKey;
+    static int addOrbitingBodyKey;
 
     // Supported layouts
     enum keyboardLayouts {
@@ -26,7 +26,7 @@ public class KBInput {
 
     // Sets the simulation's inputs according to the provided keyboard layout
     // Currently supported layouts: QWERTY, Dvorak, AZERTY, QWERTZ, and Colemak
-    public static void setKeyboardLayout(keyboardLayouts layout) {
+    static void setKeyboardLayout(keyboardLayouts layout) {
         switch (layout) {
             case QWERTY:
                 panUpKey = KeyEvent.VK_W;
@@ -93,7 +93,7 @@ public class KBInput {
 
     // Returns the name of the key assigned to a certain action in the simulation
     // Used to show user controls consistent with their chosen keyboard layout
-    public static String getKeyName(int keyAction) {
-        return getKeyName(keyAction);
+    static String getKeyName(int keyAction) {
+        return KeyEvent.getKeyText(keyAction);
     }
 }

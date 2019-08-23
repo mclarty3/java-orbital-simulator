@@ -1,22 +1,16 @@
 package main.java;
 
-import processing.core.PApplet;
-import processing.core.PFont;
+class MenuText {
 
+    int xPos;    // X position of the top left corner of the text box
+    int yPos;    // Y position of the top left corner of the text box
+    int width;   // Width of the text box in pixels
+    int height;  // Height of the text box in pixels
+    String text; // Text to be displayed in the text box
+    int colour;  // Colour of the text
+    int size;    // Size of the text font
 
-public class MenuText {
-
-    Window testWindow = new Window();
-
-    public int xPos;    // X position of the top left corner of the text box
-    public int yPos;    // Y position of the top left corner of the text box
-    public int width;   // Width of the text box in pixels
-    public int height;  // Height of the text box in pixels
-    public String text; // Text to be displayed in the text box
-    public int colour;  // Colour of the text
-    public int size;    // Size of the text font
-
-    public MenuText(int xPosition, int yPosition, int textBoxWidth, int textBoxHeight, String displayedText, int textColour) {
+    MenuText(int xPosition, int yPosition, int textBoxWidth, int textBoxHeight, String displayedText, int textColour) {
         xPos = xPosition;
         yPos = yPosition;
         width = textBoxWidth;

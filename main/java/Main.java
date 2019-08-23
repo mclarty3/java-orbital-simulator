@@ -1,8 +1,6 @@
 package main.java;
 
 import processing.core.PApplet;
-import java.awt.event.KeyEvent;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,42 +8,43 @@ import java.util.List;
 public class Main {
 
     // Constants
-    public static double G = 6.67e-11;  // Gravitational constant
-    public static double AU = 1.496e11; // Astronomical unit in meters
+    static double G = 6.67e-11;  // Gravitational constant
+    static double AU = 1.496e11; // Astronomical unit in meters
 
     // Window variables
-    public static Window window = new Window();
-    public static double AU_TO_WINDOW_SCALAR = 5; // Determines how many AU's are visible in the width of the window
-    public static double SCALE = Window.WINDOW_WIDTH / (AU_TO_WINDOW_SCALAR * AU); // Used to convert real-life scale to window scale for drawing
+    static Window window = new Window();
+    static double AU_TO_WINDOW_SCALAR = 5; // Determines how many AU's are visible in the width of the window
+    static double SCALE = Window.WINDOW_WIDTH / (AU_TO_WINDOW_SCALAR * AU); // Used to convert real-life scale to window scale for drawing
 
     // Simulation timing variables
-    public static double fps = 1000; // Turns out if I make this ridiculously high, the simulation runs much better!
-    public static boolean paused = false; // Holds if the simulation is paused
-    public static double TIMESCALE = 10; // Time scale at simulation start in days per second
-    public static boolean changingTime = false; // Prevents the time scale from changing more than once per key press
+    @SuppressWarnings("FieldCanBeLocal")
+    private static double fps = 1000; // Turns out if I make this ridiculously high, the simulation runs much better!
+    static boolean paused = false; // Holds if the simulation is paused
+    static double TIMESCALE = 10; // Time scale at simulation start in days per second
+    static boolean changingTime = false; // Prevents the time scale from changing more than once per key press
 
     // Selected body
-    public static Body selectedBody = null;      // The currently selected body (displays info in bottom right)
-    public static boolean focusedOnBody = false; // Holds whether a body is currently centered
-    public static Body focusedBody = null;       // Body currently being centered on the screen
+    static Body selectedBody = null;      // The currently selected body (displays info in bottom right)
+    static boolean focusedOnBody = false; // Holds whether a body is currently centered
+    static Body focusedBody = null;       // Body currently being centered on the screen
 
     // Add orbiting body
-    public static boolean selectingOrbitedBody = false; // Holds whether player is selecting body to place orbiting body around
-    public static boolean addingOrbitingBody = false;   // Holds whether player is positioning orbiting body
+    static boolean selectingOrbitedBody = false; // Holds whether player is selecting body to place orbiting body around
+    static boolean addingOrbitingBody = false;   // Holds whether player is positioning orbiting body
 
     // These variables keep track of if the screen is panning, to allow for simultaneous multi-directional panning
-    public static boolean panningUp = false;
-    public static boolean panningDown = false;
-    public static boolean panningLeft = false;
-    public static boolean panningRight = false;
+    static boolean panningUp = false;
+    static boolean panningDown = false;
+    static boolean panningLeft = false;
+    static boolean panningRight = false;
     //public static boolean panning; // To be used for future mouse panning, stay tuned!
 
     // These variables keep track of if the camera is zooming, for smooth zooming in/out
-    public static boolean zoomingIn = false;
-    public static boolean zoomingOut = false;
+    static boolean zoomingIn = false;
+    static boolean zoomingOut = false;
 
     // Stores all bodies currently active in the simulation
-    public static List<Body> currentBodies = new ArrayList<>();
+    static List<Body> currentBodies = new ArrayList<>();
 
     public static void main(String[] args) {
         DateTime startDate = new DateTime(0, 0, 0, 0, 0, 0, 2000);
@@ -83,13 +82,8 @@ public class Main {
         // Keep tracks of how many frames run per second
         int frames = 0;
 
-        Body testBody = new Body("test", 100, -227.9e9  + 1e9, 0, 0, 10000 + 206.9, 10e6, 0xFFFFFFFF);
-        //testBody.addToSimulation();
-
-        paused = true;
-
         // Main loop
-        while (true) {
+        while (!window.finished) {
             // This if statement runs a certain number of times a second, dependent on the value of fps
             if (System.currentTimeMillis() - currentTime >= (1000 / fps)) {
                 // Runs simulation physics if not paused

@@ -8,15 +8,15 @@ public class DateTime {
     private String[] monthNames = {"January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"};
 
-    double milliseconds;
-    double seconds;
-    double minutes;
-    double hours;
-    int day;
-    int month;
-    int year;
+    private double milliseconds;
+    private double seconds;
+    private double minutes;
+    private double hours;
+    private int day;
+    private int month;
+    private int year;
 
-    public DateTime(double ms, double sec, double min, double h, int d, int m, int y) {
+    DateTime(double ms, double sec, double min, double h, int d, int m, int y) {
         milliseconds = ms;
         seconds = sec;
         minutes = min;
@@ -45,13 +45,13 @@ public class DateTime {
     }
 
     // Returns true if y is a leap year, false otherwise
-    public boolean isLeapYear(int y) {
+    private boolean isLeapYear(int y) {
         return (((y % 400) == 0) || ((y % 4 == 0) && (y % 100 != 0)));
     }
 
     // Returns number of days in specified month
     // Year is taken as a parameter for the case of February (m = 1) on leap years
-    public int getDaysInMonth(int m, int y) {
+    private int getDaysInMonth(int m, int y) {
         if ((m == 1) && isLeapYear(y)) {
             return 29;
         }
@@ -60,7 +60,7 @@ public class DateTime {
 
     // Checks if any variable has gone over its respective range (minutes > 60, hours > 24, etc.) and adjusts
     // accordingly. E.g: if 60 minutes have passed, reset minutes and increment hours
-    public void checkOverflow() {
+    private void checkOverflow() {
         while (milliseconds >= 1000) {
             seconds += 1;
             milliseconds -= 1000;
@@ -87,37 +87,37 @@ public class DateTime {
         }
     }
 
-    public void addMillis(double ms) {
+    void addMillis(double ms) {
         milliseconds += ms;
         checkOverflow();
     }
 
-    public void addSeconds(double s) {
+    void addSeconds(double s) {
         seconds += s;
         checkOverflow();
     }
 
-    public void addMinutes(double m) {
+    void addMinutes(double m) {
         minutes += m;
         checkOverflow();
     }
 
-    public void addHours(double h) {
+    void addHours(double h) {
         hours += h;
         checkOverflow();
     }
 
-    public void addDays(int d) {
+    void addDays(int d) {
         day += d;
         checkOverflow();
     }
 
-    public void addMonths(int m) {
+    void addMonths(int m) {
         month += m;
         checkOverflow();
     }
 
-    public void addYears(int y) {
+    void addYears(int y) {
         year += y;
         checkOverflow();
     }

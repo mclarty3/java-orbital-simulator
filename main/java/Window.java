@@ -261,13 +261,11 @@ public class Window extends PApplet {
     // Opens the specified menu
     private void openMenu(Menu menu) {
         Main.paused = true;
-        menu.isDisplayed = true;
         currentlyDisplayedMenu = menu;
     }
 
     // Closes the specified menu, returning to a previous menu or the simulation
     private void closeMenu(Menu menu) {
-        menu.isDisplayed = false;
         // Goes to previous menu if it exists
         if (menu.menuToReturnTo != null) {
             openMenu(menu.menuToReturnTo);
@@ -434,7 +432,7 @@ public class Window extends PApplet {
         else if (keyCode == KeyEvent.VK_ESCAPE) {
             key = 0; // Prevents Processing from closing the sketch (as it typically does when ESC is pushed)
             // Opens escape menu
-            if (!escapeMenu.isDisplayed) {
+            if (currentlyDisplayedMenu != escapeMenu) {
                 stayPaused = Main.paused;
                 openMenu(escapeMenu);
             }

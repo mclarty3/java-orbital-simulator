@@ -1,21 +1,19 @@
 package main.java;
 
-import java.awt.event.KeyEvent;
 import java.lang.Math;
-import processing.core.PApplet;
 
 public class Body {
 
     String name;                    // Body's name
-    double mass;                    // Body's mass in kilograms
+    private double mass;                    // Body's mass in kilograms
     Vector velocity = new Vector(); // Body's velocity vector in meters per second
     Vector position = new Vector(); // Body's position vector in meters
-    Vector force = new Vector();
+    private Vector force = new Vector();
     double radius;                  // Body's radius in meters
     int colour;                     // Body's colour in hexadecimal: 0xFFFFFFFF (first two digits represent opacity)
 
-    public Body(String bodyName, double bodyMass, double initXPos, double initYPos,
-                double initXVel, double initYVel, double bodyRadius, int bodyColour) {
+    Body(String bodyName, double bodyMass, double initXPos, double initYPos,
+         double initXVel, double initYVel, double bodyRadius, int bodyColour) {
         name = bodyName;
         mass = bodyMass;
         velocity.x = initXVel;
@@ -27,7 +25,7 @@ public class Body {
     }
 
     // Returns true if the calling body is the same as other
-    public boolean isSameAs(Body other) {
+    private boolean isSameAs(Body other) {
         return ((name.equals(other.name)) &&
                 (mass == other.mass) &&
                 (velocity.equals(other.velocity)) &&
@@ -35,19 +33,19 @@ public class Body {
     }
 
     // Updates the position of the body based on its velocity
-    public void updatePosition(double seconds) {
+    private void updatePosition(double seconds) {
         position.x += velocity.x * seconds;
         position.y += velocity.y * seconds;
     }
 
     // Updates the velocity of the body based on force acting on it
-    public void updateVelocity(double seconds) {
+    private void updateVelocity(double seconds) {
         velocity.x += ((force.x / mass) * seconds);
         velocity.y += ((force.y / mass) * seconds);
     }
 
     // Returns the distance between this body and another body in vector form
-    public Vector getDistance(Body other) {
+    private Vector getDistance(Body other) {
         Vector temp = new Vector();
         temp.x = other.position.x - position.x;
         temp.y = other.position.y - position.y;
@@ -55,7 +53,7 @@ public class Body {
     }
 
     // Returns the force of gravity acting on this body by other body
-    public Vector getForceG(Body other) {
+    private Vector getForceG(Body other) {
         Vector temp = new Vector();
         Vector distance = getDistance(other);
         double force = ((Main.G * mass * other.mass) / Math.pow(distance.getMagnitude(), 2));
@@ -87,7 +85,7 @@ public class Body {
 
     // Calculates the force of gravity acting on all planets by all other planets
     // and updates the velocities and positions accordingly
-    public static void runFramePhysics(double timeStep) {
+    static void runFramePhysics(double timeStep) {
         for (Body body: Main.currentBodies) {
             for (Body other: Main.currentBodies) {
                 if (!body.isSameAs(other)) {
@@ -103,7 +101,7 @@ public class Body {
     // Gets the index of a body in the simulated body array if it exists
     // Used for removing body from the simulation
     // Return value of -1 means body not found in array
-    public static int findBodyInSim(Body body) {
+    private static int findBodyInSim(Body body) {
         for (int i = 0; i < Main.currentBodies.size(); i++) {
             if (Main.currentBodies.get(i).isSameAs(body)) {
                 return i;
@@ -113,7 +111,7 @@ public class Body {
     }
 
     // Adds the calling body to the simulated bodies array, spawning it in the simulation
-    public void addToSimulation() {
+    private void addToSimulation() {
         Main.currentBodies.add(this);
     }
 
@@ -130,7 +128,7 @@ public class Body {
 
     // PROBLEM: Orbiting body's don't orbit circularly unless placed pretty much right on the y axis of the body
     // Adds a body orbiting bodyToOrbit at the correct velocity relative to its distance from bodyToOrbit
-    public static void addOrbitingBody(double x, double y, Body bodyToOrbit, double radius) {
+    static void addOrbitingBody(double x, double y, Body bodyToOrbit, double radius) {
         // Holds the distance vector between the new body and the body it's orbiting
         Vector distance = bodyToOrbit.position.getDifference(new Vector(x, y));
 
@@ -140,7 +138,7 @@ public class Body {
         distance.normalize();
 
         // Holds the velocity vector of the orbiting planet
-        Vector velocityVec = new Vector(-distance.y, distance.x).times(velocity);
+        Vector velocityVec = new Vector(distance.y * -1, distance.x * 1).times(velocity);
         // Adds the parent body's velocity to account for its movement
         velocityVec.x += bodyToOrbit.velocity.x;
         velocityVec.y += bodyToOrbit.velocity.y;
@@ -152,20 +150,20 @@ public class Body {
 
     // Pans the camera in the specified direction
     // Parameter must be "left", "right", "up", or "down"
-    public static void pan(String direction) {
-        if (direction == "left") {
+    private static void pan(String direction) {
+        if (direction.equals("left")) {
             for (Body body : Main.currentBodies) {
                 body.position.x += 1000 * Main.AU_TO_WINDOW_SCALAR;
             }
-        } else if (direction == "right") {
+        } else if (direction.equals("right")) {
             for (Body body: Main.currentBodies) {
                 body.position.x -= 1000 * Main.AU_TO_WINDOW_SCALAR;
             }
-        } else if (direction == "up") {
+        } else if (direction.equals("up")) {
             for (Body body: Main.currentBodies) {
                 body.position.y -= 1000 * Main.AU_TO_WINDOW_SCALAR;
             }
-        } else if (direction == "down") {
+        } else if (direction.equals("down")) {
             for (Body body: Main.currentBodies) {
                 body.position.y += 1000 * Main.AU_TO_WINDOW_SCALAR;
             }
@@ -177,7 +175,7 @@ public class Body {
 
     // Checks if one of the four booleans is true
     // If so: executes pan() in that direction
-    public static void checkPan(boolean up, boolean down, boolean left, boolean right) {
+    static void checkPan(boolean up, boolean down, boolean left, boolean right) {
         if (up) {
             pan("up");
         }
@@ -194,7 +192,7 @@ public class Body {
     }
 
     // Returns a body if the cursor is hovering over that body, returns null otherwise
-    public static Body checkMouseOnBody(float x, float y) {
+    static Body checkMouseOnBody(float x, float y) {
         Vector mousePos = new Vector((x - Window.WINDOW_WIDTH/2.0), (Window.WINDOW_HEIGHT/2.0 - y));
         for (Body body: Main.currentBodies) {
             if (body.position.times(Main.SCALE).getDifference(mousePos).getMagnitude() <= (body.radius * Main.SCALE)) {
@@ -208,7 +206,7 @@ public class Body {
     // Enter 1 to increase zoom, -1 to decrease zoom, or 0 to reset zoom
     // Also note that I'm incrementing/decrementing the scalar by stupidly small values because of how quickly
     // the command gets run in the main game loop
-    public static void zoom(int zoomType) {
+    static void zoom(int zoomType) {
         // Zoom out
         if (zoomType == -1) {
             Main.AU_TO_WINDOW_SCALAR *= 1.0000001;
@@ -225,7 +223,7 @@ public class Body {
     }
 
     // Similar to checkPan -- checks if the user is zooming in or out to allow for smooth zooming
-    public static void checkZoom(boolean in, boolean out) {
+    static void checkZoom(boolean in, boolean out) {
         if (in) {
             zoom(1);
         } else if (out) {
@@ -252,7 +250,7 @@ public class Body {
         } else if (Main.TIMESCALE > (1.0 / 24.0)) {
             timeWord = " hours";
             modifiedTimeScale = Main.TIMESCALE * 24;
-        } else if (Main.TIMESCALE > (double)((1.0 / 24.0) / 60.0)) {
+        } else if (Main.TIMESCALE > (1.0 / 24.0 / 60.0)) {
             timeWord = " minutes";
             modifiedTimeScale = Main.TIMESCALE * 24 * 60;
         } else {
@@ -263,7 +261,7 @@ public class Body {
     }
 
     // Pans the camera to place the focused body in the center of the screen
-    public static void focusBody(Body focused) {
+    static void focusBody(Body focused) {
         double xOffset = focused.position.x;
         double yOffset = focused.position.y;
         for (Body body: Main.currentBodies) {
