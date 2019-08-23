@@ -360,7 +360,7 @@ public class Window extends PApplet {
                     Main.addingOrbitingBody = false;
                     Vector planetPos = new Vector(mouseX, mouseY);
                     planetPos.toWorldSpace();
-                    Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 10e6);
+                    Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 3e3);
                 }
                 // Selects the clicked on body in the simulation
                 Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
