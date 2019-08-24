@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="OrbitalSim:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="4a047edb-1e56-46e1-a28f-ec5ab567ffcd" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/src" />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="vmOptionsForImporter" value="-Xmx768m" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenRunner">
+    <option name="delegateBuildToMaven" value="true" />
+  </component>
+  <component name="ProjectId" id="1OzHRboESxppkPf3IlRtlKVk8AT" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="Downloaded.Files.Path.Enabled" value="false" />
+    <property name="Repository.Attach.Annotations" value="false" />
+    <property name="Repository.Attach.JavaDocs" value="false" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Maven Test" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.importing" />
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="12" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="main.java.Main" />
+      <module name="OrbitalSim" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="$APPLICATION_HOME_DIR$/jbr" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Body" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="4a047edb-1e56-46e1-a28f-ec5ab567ffcd" name="Default Changelist" comment="" />
+      <created>1564973497907</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1564973497907</updated>
+    </task>
+    <task id="LOCAL-00001" summary="Abstract code in draw method to multiple functions">
+      <created>1566442980491</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1566442980491</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Add a button class to streamline adding buttons to menus">
+      <created>1566453922183</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1566453922183</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Fix spacing">
+      <created>1566453948484</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1566453948484</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Fix spacing">
+      <created>1566453961887</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1566453961887</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add an escape menu with functioning resume and quit buttons">
+      <created>1566453977747</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1566453977747</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add function to manually add buttons after object construction">
+      <created>1566460479009</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1566460479009</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Add menu class to streamline creation and displaying of menus">
+      <created>1566460514508</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1566460514508</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Condense redundant variables checking if menu is open into one menu object">
+      <created>1566460565590</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1566460565590</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Add additional button actions">
+      <created>1566508520201</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1566508520201</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Add function to resize menu components on resolution change">
+      <created>1566508548643</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1566508548643</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Add MenuText class to streamline drawing text in menu">
+      <created>1566508577712</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1566508577712</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Enable seamless resolution change via the options menu">
+      <created>1566508593270</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1566508593270</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Add more thorough comments">
+      <created>1566510091103</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1566510091103</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Enable changing keyboard layouts through the options menu">
+      <created>1566511010599</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1566511010599</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Change file structure to Java convention">
+      <created>1566512998075</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1566512998075</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Change planet radii to accurate values">
+      <created>1566584743501</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1566584743501</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Change add orbiting body radius to something more reasonable">
+      <created>1566584818960</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1566584818960</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Fix compiler warnings">
+      <created>1566586857088</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1566586857088</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Abstract code in draw method to multiple functions" />
+    <MESSAGE value="Add a button class to streamline adding buttons to menus" />
+    <MESSAGE value="Fix spacing" />
+    <MESSAGE value="Add an escape menu with functioning resume and quit buttons" />
+    <MESSAGE value="Add function to manually add buttons after object construction" />
+    <MESSAGE value="Add menu class to streamline creation and displaying of menus" />
+    <MESSAGE value="Condense redundant variables checking if menu is open into one menu object" />
+    <MESSAGE value="Add additional button actions" />
+    <MESSAGE value="Add function to resize menu components on resolution change" />
+    <MESSAGE value="Add MenuText class to streamline drawing text in menu" />
+    <MESSAGE value="Enable seamless resolution change via the options menu" />
+    <MESSAGE value="Add more thorough comments" />
+    <MESSAGE value="Enable changing keyboard layouts through the options menu" />
+    <MESSAGE value="Change file structure to Java convention" />
+    <MESSAGE value="Change planet radii to accurate values" />
+    <MESSAGE value="Change add orbiting body radius to something more reasonable" />
+    <MESSAGE value="Fix compiler warnings" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix compiler warnings" />
+  </component>
+</project>
