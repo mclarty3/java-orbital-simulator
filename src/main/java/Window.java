@@ -2,6 +2,8 @@ package main.java;
 
 import processing.core.PApplet;
 import processing.core.PFont;
+import processing.event.MouseEvent;
+
 import java.awt.event.KeyEvent;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -26,6 +28,8 @@ public class Window extends PApplet {
     private PFont buttonFont; // Font used for drawing buttons
 
     private boolean stayPaused; // Tracks whether simulation is paused before menu is opened
+
+    private boolean panning; // Tracks whether the user is panning with the mouse
 
     private static Menu currentlyDisplayedMenu; // Holds the menu currently on screen
     private static List<Menu> menus = new ArrayList<>(); // Holds all menus in the simulation
@@ -160,6 +164,9 @@ public class Window extends PApplet {
             displayMenu(currentlyDisplayedMenu);
         }
         else {
+            if (panning) {
+                Body.panXY(mouseX - pmouseX, mouseY - pmouseY);
+            }
             background(0);
             List<Body> bodiesToDraw = Main.currentBodies;
             stroke(0x00000000);
@@ -360,15 +367,18 @@ public class Window extends PApplet {
                     planetPos.toWorldSpace();
                     Body.addOrbitingBody(planetPos.x, planetPos.y, Main.selectedBody, 3e3);
                 }
-                // Selects the clicked on body in the simulation
-                Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
-                // Checks if player is selecting a body to add an orbiting body around
-                if (Main.selectingOrbitedBody) {
-                    if (Main.selectedBody != null) {
-                        Main.selectingOrbitedBody = false;
-                        Main.addingOrbitingBody = true;
-                    } else {
-                        Main.selectingOrbitedBody = false;
+                else {
+                    panning = true;
+                    // Selects the clicked on body in the simulation
+                    Main.selectedBody = Body.checkMouseOnBody(mouseX, mouseY);
+                    // Checks if player is selecting a body to add an orbiting body around
+                    if (Main.selectingOrbitedBody) {
+                        if (Main.selectedBody != null) {
+                            Main.selectingOrbitedBody = false;
+                            Main.addingOrbitingBody = true;
+                        } else {
+                            Main.selectingOrbitedBody = false;
+                        }
                     }
                 }
             }
@@ -377,6 +387,20 @@ public class Window extends PApplet {
 
     // Runs when the mouse is released
     public void mouseReleased() {
+        panning = false;
+    }
+
+    //TODO: Keep mouse in consistent place in relation to simulation-space when zooming
+    public void mouseWheel(MouseEvent event) {
+        float times = event.getCount();
+        float cameraToMouseX = (mouseX - (WINDOW_WIDTH / 2.0f));
+        float cameraToMouseY = (mouseY - (WINDOW_HEIGHT / 2.0f));
+        if (times < 0) {
+            Body.newZoom(1);
+        }
+        else {
+            Body.newZoom(-1);
+        }
     }
 
     // Runs when any keyboard key is pressed

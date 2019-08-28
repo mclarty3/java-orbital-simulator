@@ -173,6 +173,17 @@ public class Body {
         Main.focusedOnBody = false;
     }
 
+    // Takes a change in screen coordinates and converts and applies it to a simulation-scale pan
+    // Screen should follow mouse movement
+    static void panXY(float mouseX, float mouseY) {
+        Vector movement = new Vector(mouseX, mouseY);
+
+        for (Body body: Main.currentBodies) {
+            body.position.x += (movement.x / Main.SCALE);
+            body.position.y -= (movement.y / Main.SCALE);
+        }
+    }
+
     // Checks if one of the four booleans is true
     // If so: executes pan() in that direction
     static void checkPan(boolean up, boolean down, boolean left, boolean right) {
@@ -214,6 +225,22 @@ public class Body {
         // Zoom in
         else if (zoomType == 1) {
             Main.AU_TO_WINDOW_SCALAR /= 1.0000001;
+        }
+        // Reset zoom to simulation default
+        else if (zoomType == 0) {
+            Main.AU_TO_WINDOW_SCALAR = 5;
+        }
+        Main.SCALE = Window.WINDOW_WIDTH / (Main.AU_TO_WINDOW_SCALAR * Main.AU);
+    }
+
+    static void newZoom(int zoomType) {
+        // Zoom out
+        if (zoomType == -1) {
+            Main.AU_TO_WINDOW_SCALAR *= 1.1;
+        }
+        // Zoom in
+        else if (zoomType == 1) {
+            Main.AU_TO_WINDOW_SCALAR /= 1.1;
         }
         // Reset zoom to simulation default
         else if (zoomType == 0) {
