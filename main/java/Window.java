@@ -54,7 +54,7 @@ public class Window extends PApplet {
     private static Button returnToStartButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
                                                             WINDOW_WIDTH / 3, WINDOW_HEIGHT * 3 / 5, "Quit to main menu",
                                                             255, 0xFF282828, 0x00000000,
-                                                            Button.action.PREVIOUS_MENU, null);
+                                                            Button.action.OPEN_MENU, startMenu);
 
     // Escape menu button declarations
     private static Button resumeButton = new Button(WINDOW_WIDTH / 3, WINDOW_HEIGHT / 5,
@@ -325,7 +325,7 @@ public class Window extends PApplet {
     private void buttonPress(Button button) {
         Button.action action = button.getAction();
         if (action == Button.action.PLAY) {
-            previousMenus.push(currentlyDisplayedMenu);
+            //previousMenus.push(currentlyDisplayedMenu);
             closeMenu(currentlyDisplayedMenu);
             Main.paused = false;
         }
