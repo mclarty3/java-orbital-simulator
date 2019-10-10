@@ -55,7 +55,7 @@ public class Main {
         PApplet.runSketch(windowName, window);
 
         // Creates body in simulation and adds them to list of bodies
-        Body sun = new Body("Sun", 1.989e30, 0, 0, 0, 0, 695.51e6, 0xFFECD67E);
+        /*Body sun = new Body("Sun", 1.989e30, 0, 0, 0, 0, 695.51e6, 0xFFECD67E);
         Body mercury = new Body("Mercury", 0.330e24, -57.9e9, 0, 0, -47.4e3, 2439, 0xFFFFFF00);
         Body venus = new Body("Venus", 4.87e24, -108.2e9, 0, 0, -35e3, 6057, 0xFF8BB7AB);
         Body earth = new Body("Earth", 5.97e24, 1 * AU, 0, 0, 29.8e3, 6378, 0xFF8CB1DE);
@@ -73,7 +73,9 @@ public class Main {
         currentBodies.add(jupiter);
         currentBodies.add(saturn);
         currentBodies.add(uranus);
-        currentBodies.add(neptune);
+        currentBodies.add(neptune);*/
+        currentBodies = BodySystem.alphaCentauri.simulatedBodies;
+
 
         // Starts timer to keep track of frame timing
         long currentTime = System.currentTimeMillis();
